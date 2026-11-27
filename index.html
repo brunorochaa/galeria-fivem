@@ -223,7 +223,7 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 	const secoes = [];
 	const conteudo = $("conteudo");
 
-	TELAS.forEach(([nomeSecao, lista], si) => {
+	TELAS.forEach(([nomeSecao, pasta, lista], si) => {
 		const sec = el("section");
 		sec.id = "s-" + si;
 		const cab = el("div", "cab");
@@ -239,9 +239,10 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 			const fig = el("figure", "cartao" + (off ? " desligado" : ""));
 			fig.id = "p-" + arq; // diferente do #link, para o navegador não rolar até o cartão ao abrir pelo link
 			const a = el("a", "foto");
-			a.href = arq + ".png";
+			const foto = "prints/" + pasta + "/" + arq + ".png";
+			a.href = foto;
 			const img = el("img");
-			img.src = arq + ".png"; img.alt = titulo; img.loading = "lazy";
+			img.src = foto; img.alt = titulo; img.loading = "lazy";
 			img.onerror = () => fig.classList.add("sem-print");
 			const falta = el("div", "faltando");
 			falta.append(el("span", null, "Print ainda não gerado"), el("code", null, arq));
@@ -263,7 +264,7 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 			if (nota) cap.append(el("span", "nota", nota));
 			fig.append(a, cap);
 			grade.append(fig);
-			const item = { arq, titulo, rec, nota: nota || "", off: !!off, secao: s, cartao: fig, bTitulo, bRec, chave: semAcento(titulo + " " + rec + " " + arq + " " + nomeSecao) };
+			const item = { arq, foto, titulo, rec, nota: nota || "", off: !!off, secao: s, cartao: fig, bTitulo, bRec, chave: semAcento(titulo + " " + rec + " " + arq + " " + nomeSecao) };
 			a.addEventListener("click", (e) => { e.preventDefault(); abrir(visiveis().indexOf(item)); });
 			todos.push(item);
 			s.itens.push(item);
@@ -364,12 +365,12 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 		atual = (i + lista.length) % lista.length;
 		const t = lista[atual];
 		visor.classList.remove("real");
-		vImg.src = t.arq + ".png";
+		vImg.src = t.foto;
 		vImg.alt = t.titulo;
 		$("vTitulo").textContent = t.titulo;
 		$("vRecurso").textContent = t.rec;
 		$("vContador").textContent = (atual + 1) + " de " + lista.length + " · " + t.secao.nome;
-		$("vAbrir").href = t.arq + ".png";
+		$("vAbrir").href = t.foto;
 		const rod = $("vRodape");
 		rod.textContent = "";
 		const texto = (t.off ? "Desligado. " : "") + t.nota;
@@ -378,14 +379,14 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 		const ativa = $("tiras").children[atual];
 		if (ativa) { const tr = $("tiras"); tr.scrollLeft = ativa.offsetLeft - tr.clientWidth / 2 + ativa.offsetWidth / 2; }
 		history.replaceState(null, "", "#" + t.arq);
-		[atual + 1, atual - 1].forEach((k) => { const p = lista[(k + lista.length) % lista.length]; if (p) new Image().src = p.arq + ".png"; });
+		[atual + 1, atual - 1].forEach((k) => { const p = lista[(k + lista.length) % lista.length]; if (p) new Image().src = p.foto; });
 	}
 	function montarTiras() {
 		const tiras = $("tiras");
 		tiras.textContent = "";
 		lista.forEach((t, k) => {
 			const m = el("img");
-			m.src = t.arq + ".png"; m.alt = ""; m.loading = "lazy";
+			m.src = t.foto; m.alt = ""; m.loading = "lazy";
 			m.onclick = () => mostrar(k);
 			tiras.append(m);
 		});
