@@ -1,38 +1,30 @@
-# Screen gallery — brnShop
+# Galeria de telas — brnShop
 
-**English** · [Português](README.pt-BR.md)
+**Português** · [English](README.en.md)
 
-Screenshots of every screen (NUI) from a FiveM test server (vRP), rendered with fake data. All screens share the same "dark glass" theme in black, off-white and gold.
+Prints das telas do servidor FiveM de teste (vRP), com dados fictícios.
 
-To browse: open `index.html` or the GitHub Pages link.
+Para ver: abra o `index.html` ou o link do GitHub Pages. A galeria tem português e inglês (bandeiras no topo; a escolha fica salva no navegador e, na primeira visita, segue o idioma do navegador).
 
-## Features
-
-- English and Portuguese (flags at the top; the choice is remembered in the browser, and the first visit follows the browser language)
-- Search by screen, resource or section
-- Section filter with screen counts
-- Full-screen viewer with arrow keys and thumbnails
-- Direct link to any screenshot: add `#<name>` to the URL (e.g. `index.html#loja`)
-
-## Structure
+## Estrutura
 
 ```
-index.html      the gallery (interface texts in both languages)
-lista.js        list of screens: section, folder and screenshots; English titles in TELAS_EN
+index.html      a galeria (busca, filtro por seção, visor com setas, link direto #nome; textos nos dois idiomas)
+lista.js        lista das telas: seção, pasta e prints; títulos em inglês em TELAS_EN
 logo.png
-flags/          language flags
+flags/          bandeiras do idioma
 prints/
-  entrada/        loading screen, spawn picker, character creation
-  hud/            HUD in the car and on foot, knocked-out screen
-  jogador/        inventory, ID card, phone, animations
-  aparencia/      clothing store, barber shop, tattoo studio
-  lojas/          store, Ammunation, car dealership, real estate
-  carros/         garage and mechanic (LS Customs)
-  baus/           chest, trunk, house chest
-  producao-banco/ crafting and bank
-  avisos-chat/    notifications, progress bar, chat
-  ferramentas/    quick menu, photo mode, vRP menu
-  desligados/     screens from resources that are turned off
+  entrada/      loading, entrada na cidade, criação de personagem
+  hud/          HUD no carro e a pé, desacordado
+  jogador/      inventário, identidade, celular, animações
+  aparencia/    roupas, barbearia, tatuagem
+  lojas/        loja, Ammunation, concessionária, imobiliária
+  carros/       garagem e mecânica
+  baus/         baú, porta-malas, baú da casa
+  producao-banco/
+  avisos-chat/
+  ferramentas/  menu rápido, modo foto, menu do vRP
+  desligados/   telas de recursos fora do servidor
 ```
 
-Folder and file names are in Portuguese, matching the server. The screenshots themselves show the server in Portuguese.
+Tela nova: além da linha em `TELAS`, acrescente o título em inglês em `TELAS_EN.titulos`.
