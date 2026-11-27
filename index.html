@@ -64,6 +64,13 @@ h1 em{font-style:normal;background:linear-gradient(120deg,#f6e3b4,var(--ouro) 45
 .btn.ativo{color:var(--ouro);border-color:rgba(226,193,120,.45);background:rgba(226,193,120,.08)}
 .btn svg{width:16px;height:16px}
 @media(max-width:1100px){.so-largo{display:none}}
+/* bandeiras de idioma (PNG com margem em cima e embaixo: a caixa recorta só a bandeira) */
+.idiomas{display:flex;gap:2px;flex-shrink:0;background:rgba(255,255,255,.03);border:1px solid var(--borda);border-radius:12px;padding:3px}
+.idiomas button{width:38px;height:32px;border:0;border-radius:9px;background:transparent;display:grid;place-items:center;cursor:pointer;opacity:.55;transition:.15s}
+.idiomas button:hover{opacity:1}
+.idiomas button[aria-pressed="true"]{opacity:1;background:rgba(226,193,120,.12);box-shadow:inset 0 0 0 1px rgba(226,193,120,.4)}
+.idiomas span{display:block;width:24px;height:16px;overflow:hidden;border-radius:3px}
+.idiomas img{display:block;width:24px;height:24px;margin-top:-4px}
 
 /* seções e cartões */
 main{max-width:1600px;margin:0 auto;padding:6px 40px 48px}
@@ -173,6 +180,10 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 	<button class="btn" id="densidade" title="Prints menores">
 		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
 	</button>
+	<div class="idiomas" id="idiomas" role="group">
+		<button type="button" data-idioma="pt" title="Português (Brasil)" aria-label="Português (Brasil)"><span><img src="flags/br.png" alt=""></span></button>
+		<button type="button" data-idioma="en" title="English (US)" aria-label="English (US)"><span><img src="flags/us.png" alt=""></span></button>
+	</div>
 </div></header>
 
 <main id="conteudo"></main>
@@ -211,10 +222,39 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 	const svgAmpliar = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>';
 
 	const svgCopiar = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+
+	// idioma: o escolhido nas bandeiras (lembrado neste navegador) ou o do navegador
+	const IDIOMA = (() => { const s = ler("galeria-idioma"); if (s === "pt" || s === "en") return s; return (navigator.language || "").toLowerCase().startsWith("pt") ? "pt" : "en"; })();
+	const EN = IDIOMA === "en";
+	const T = EN ? {
+		titulo: "Screen gallery", h1: "Screen <em>gallery</em>", inicio: "Back to start (all screens)", buscar: "Search",
+		menores: "Smaller screenshots", maiores: "Larger screenshots", nenhuma: "No screen found", tente: "Try another name or the resource (e.g. vrp_bank).",
+		visor: "View screenshot", real: "Actual size (Space)", abrirImg: "Open the image", fechar: "Close (Esc)", anterior: "Previous (←)", proximo: "Next (→)",
+		tela: " screen", telas: " screens", de: " of ", todas: "All", semPrint: "Screenshot not generated yet", desligado: "Disabled", copiado: "Copied: ",
+	} : {
+		titulo: "Galeria de telas", h1: "Galeria de <em>telas</em>", inicio: "Voltar ao início (todas as telas)", buscar: "Buscar",
+		menores: "Prints menores", maiores: "Prints maiores", nenhuma: "Nenhuma tela encontrada", tente: "Tente outro nome ou o recurso (ex.: vrp_bank).",
+		visor: "Visualizar print", real: "Tamanho real (Espaço)", abrirImg: "Abrir a imagem", fechar: "Fechar (Esc)", anterior: "Anterior (←)", proximo: "Próximo (→)",
+		tela: " tela", telas: " telas", de: " de ", todas: "Todas", semPrint: "Print ainda não gerado", desligado: "Desligado", copiado: "Copiado: ",
+	};
+	const qtTelas = (n) => n + (n > 1 ? T.telas : T.tela);
+	document.documentElement.lang = EN ? "en" : "pt-BR";
+	document.title = T.titulo;
+	document.querySelector(".marca").title = T.inicio;
+	document.querySelector(".marca h1").innerHTML = T.h1;
+	$("busca").placeholder = T.buscar;
+	$("vazio").textContent = ""; $("vazio").append(el("b", null, T.nenhuma), T.tente);
+	$("visor").setAttribute("aria-label", T.visor);
+	$("vReal").title = T.real; $("vAbrir").title = T.abrirImg; $("vFechar").title = T.fechar; $("vAnt").title = T.anterior; $("vProx").title = T.proximo;
+	document.querySelectorAll("#idiomas button").forEach((b) => {
+		b.setAttribute("aria-pressed", String(b.dataset.idioma === IDIOMA));
+		b.onclick = () => { if (b.dataset.idioma !== IDIOMA) { guardar("galeria-idioma", b.dataset.idioma); location.reload(); } };
+	});
+	$("idiomas").setAttribute("aria-label", EN ? "Language" : "Idioma");
 	// copia para a área de transferência (no file:// o navigator.clipboard pode falhar: usa o jeito antigo)
 	let tempoAviso;
 	function copiar(texto) {
-		const avisar = () => { const a = $("avisoCopia"); a.textContent = ""; a.append("Copiado: ", el("code", null, texto)); a.classList.add("on"); clearTimeout(tempoAviso); tempoAviso = setTimeout(() => a.classList.remove("on"), 2200); };
+		const avisar = () => { const a = $("avisoCopia"); a.textContent = ""; a.append(T.copiado, el("code", null, texto)); a.classList.add("on"); clearTimeout(tempoAviso); tempoAviso = setTimeout(() => a.classList.remove("on"), 2200); };
 		const antigo = () => { const ta = el("textarea"); ta.value = texto; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.append(ta); ta.select(); try { document.execCommand("copy"); } catch (e) {} ta.remove(); avisar(); };
 		if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(texto).then(avisar, antigo); else antigo();
 	}
@@ -223,11 +263,12 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 	const secoes = [];
 	const conteudo = $("conteudo");
 
-	TELAS.forEach(([nomeSecao, pasta, lista], si) => {
+	TELAS.forEach(([nomeSecaoPt, pasta, lista], si) => {
+		const nomeSecao = EN ? TELAS_EN.secoes[pasta] || nomeSecaoPt : nomeSecaoPt;
 		const sec = el("section");
 		sec.id = "s-" + si;
 		const cab = el("div", "cab");
-		const qt = el("span", "qt", lista.length + (lista.length > 1 ? " telas" : " tela"));
+		const qt = el("span", "qt", qtTelas(lista.length));
 		cab.append(el("span", "n", String(si + 1).padStart(2, "0")), el("h2", null, nomeSecao), qt);
 		const grade = el("div", "grade");
 		sec.append(cab, grade);
@@ -235,7 +276,9 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 		const s = { nome: nomeSecao, sec, qt, itens: [] };
 		secoes.push(s);
 
-		lista.forEach(([arq, titulo, rec, nota, off]) => {
+		lista.forEach(([arq, tituloPt, rec, notaPt, off]) => {
+			const titulo = EN ? TELAS_EN.titulos[arq] || tituloPt : tituloPt;
+			const nota = EN && notaPt ? TELAS_EN.notas[arq] || notaPt : notaPt;
 			const fig = el("figure", "cartao" + (off ? " desligado" : ""));
 			fig.id = "p-" + arq; // diferente do #link, para o navegador não rolar até o cartão ao abrir pelo link
 			const a = el("a", "foto");
@@ -245,11 +288,11 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 			img.src = foto; img.alt = titulo; img.loading = "lazy";
 			img.onerror = () => fig.classList.add("sem-print");
 			const falta = el("div", "faltando");
-			falta.append(el("span", null, "Print ainda não gerado"), el("code", null, arq));
+			falta.append(el("span", null, T.semPrint), el("code", null, arq));
 			const amp = el("span", "ampliar");
 			amp.innerHTML = svgAmpliar;
 			a.append(img, falta, amp);
-			if (off) a.append(el("span", "selo", "Desligado"));
+			if (off) a.append(el("span", "selo", T.desligado));
 			const cap = el("figcaption", "legenda");
 			const bTitulo = el("b", null, titulo);
 			const bRec = el("span", "rec", rec);
@@ -264,7 +307,7 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 			if (nota) cap.append(el("span", "nota", nota));
 			fig.append(a, cap);
 			grade.append(fig);
-			const item = { arq, foto, titulo, rec, nota: nota || "", off: !!off, secao: s, cartao: fig, bTitulo, bRec, chave: semAcento(titulo + " " + rec + " " + arq + " " + nomeSecao) };
+			const item = { arq, foto, titulo, rec, nota: nota || "", off: !!off, secao: s, cartao: fig, bTitulo, bRec, chave: semAcento(titulo + " " + tituloPt + " " + rec + " " + arq + " " + nomeSecao + " " + nomeSecaoPt) };
 			a.addEventListener("click", (e) => { e.preventDefault(); abrir(visiveis().indexOf(item)); });
 			todos.push(item);
 			s.itens.push(item);
@@ -290,7 +333,7 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 		chips.append(c);
 		chipEls.push(c);
 	};
-	novoChip("Todas", todos.length, -1);
+	novoChip(T.todas, todos.length, -1);
 	secoes.forEach((s, i) => novoChip(s.nome, s.itens.length, i));
 	// esmaece a borda direita enquanto houver seção escondida para rolar
 	const atualizarMais = () => chips.classList.toggle("mais", chips.scrollLeft + chips.clientWidth < chips.scrollWidth - 4);
@@ -328,7 +371,7 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 				marcar(t.bRec, t.rec, termo);
 			});
 			s.sec.hidden = n === 0;
-			s.qt.textContent = termo ? n + " de " + s.itens.length : s.itens.length + (s.itens.length > 1 ? " telas" : " tela");
+			s.qt.textContent = termo ? n + T.de + s.itens.length : qtTelas(s.itens.length);
 			total += n;
 		});
 		$("vazio").hidden = total > 0;
@@ -337,7 +380,7 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 
 	// prints menores (lembrado neste navegador)
 	const dens = $("densidade");
-	function aplicarDensidade(c) { document.body.classList.toggle("compacta", c); dens.classList.toggle("ativo", c); dens.title = c ? "Prints maiores" : "Prints menores"; }
+	function aplicarDensidade(c) { document.body.classList.toggle("compacta", c); dens.classList.toggle("ativo", c); dens.title = c ? T.maiores : T.menores; }
 	aplicarDensidade(ler("galeria-compacta") === "1");
 	dens.onclick = () => { const c = !document.body.classList.contains("compacta"); aplicarDensidade(c); guardar("galeria-compacta", c ? "1" : "0"); };
 
@@ -369,11 +412,11 @@ mark{background:rgba(226,193,120,.3);color:inherit;border-radius:4px;padding:0 2
 		vImg.alt = t.titulo;
 		$("vTitulo").textContent = t.titulo;
 		$("vRecurso").textContent = t.rec;
-		$("vContador").textContent = (atual + 1) + " de " + lista.length + " · " + t.secao.nome;
+		$("vContador").textContent = (atual + 1) + T.de + lista.length + " · " + t.secao.nome;
 		$("vAbrir").href = t.foto;
 		const rod = $("vRodape");
 		rod.textContent = "";
-		const texto = (t.off ? "Desligado. " : "") + t.nota;
+		const texto = (t.off ? T.desligado + ". " : "") + t.nota;
 		if (texto.trim()) rod.append(el("span", "nota", texto));
 		[...$("tiras").children].forEach((m, k) => m.classList.toggle("ativo", k === atual));
 		const ativa = $("tiras").children[atual];

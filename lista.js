@@ -76,3 +76,31 @@ const TELAS = [
 
 // Prints que não saem do telas.js (feitos à parte)
 const SEM_SCRIPT = ["loading"];
+
+// Textos em inglês (botão de idioma da galeria). Print novo: acrescente o título aqui também.
+const TELAS_EN = {
+	secoes: {
+		entrada: "Joining", hud: "HUD", jogador: "Player", aparencia: "Appearance", lojas: "Shops",
+		carros: "Cars", baus: "Storage", "producao-banco": "Crafting and bank", "avisos-chat": "Notifications and chat",
+		ferramentas: "Test tools", desligados: "Disabled",
+	},
+	titulos: {
+		loading: "Loading screen", login: "Spawn location picker",
+		"personagem-1": "Character creation — step 1", "personagem-2": "Character creation — step 2", "personagem-3": "Character creation — step 3",
+		"hud-carro": "HUD in a car", "hud-a-pe": "HUD on foot", "hud-vida-baixa": "HUD with low health and fuel", "hud-limite": "HUD with speed limiter (J)",
+		morte: "Knocked out (countdown)", "morte-pronto": "Knocked out (can get up)",
+		inventario: "Inventory", identidade: "ID card (F11)", celular: "Phone (K) — home", "celular-gps": "Phone — GPS", animacoes: "Animations menu (F4)",
+		roupas: "Clothing store", barbearia: "Barber shop", tatuagens: "Tattoo studio",
+		loja: "Convenience store", "loja-armas": "Ammunation", concessionaria: "Car dealership", imobiliaria: "Real estate",
+		garagem: "Garage", mecanica: "Mechanic — categories", "mecanica-rodas": "Mechanic — wheels", "mecanica-pintura": "Mechanic — paint", "mecanica-motor": "Mechanic — engine",
+		bau: "Chest", "porta-malas": "Car trunk", "bau-casa": "House chest",
+		producao: "Crafting", armas: "Weapon factory", "banco-entrada": "Bank — entrance", banco: "Bank — account",
+		avisos: "Notifications", "avisos-itens": "Item received / removed", chamados: "Police call", progresso: "Progress bar (bottom right)", chat: "Chat open",
+		"menu-rapido": "Quick menu (F3) — car", "menu-rapido-lugares": "Quick menu (F3) — places", "menu-rapido-itens": "Quick menu (F3) — items", "menu-rapido-ajuda": "Quick menu (F3) — help",
+		"modo-foto": "Photo mode (F9)", "menu-vrp": "vRP menu",
+		arsenal: "Police armory",
+	},
+	notas: {
+		arsenal: "Not in server.cfg (in resources/[desligados]).",
+	},
+};
